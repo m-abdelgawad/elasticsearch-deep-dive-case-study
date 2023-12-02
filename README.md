@@ -337,6 +337,7 @@ the longitude and latitude location of an IP address.
 
 <img src="readme_files/crud_operations.jpg">
 
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### 4. Query
@@ -359,9 +360,84 @@ the longitude and latitude location of an IP address.
 
 #### a. CAT APIs
 
+<img src="readme_files/_cat_api_adminstration.jpg">
+
 #### b. Monitor Your Cluster
 
+* Enable self-monitoring through API
+
+<img src="readme_files/enable_self_monitoring.jpg">
+
+* Access monitoring dashboard in Kibana
+
+<img src="readme_files/cover.jpg">
+
+
 #### c. Diagnose and Repair Shard Issues
+
+* In this section, I will actually break some of the indices, kind of deallocate
+them in some way, and then show how to use the **cluster allocation explain API** to
+basically tell us what's wrong.
+
+* The **Explain API** basically does the troubleshooting for you.
+
+* If we run the API without any parameters, it will automatically look for the 
+first unallocated shard, and then explain why it's not allocated. Here we see an
+error because we currently don't have any unallocated shards
+
+<img src="readme_files/explain_api_no_unallocated.jpg">
+
+
+* Here we see that the "logs" index is in a green state which means that all primary
+and replica shards are allocated
+
+<img src="readme_files/logs_index_status_green.jpg">
+
+
+* Let's go ahead and allocate too many replicas for the log index
+
+<img src="readme_files/allocate_too_many_shards.jpg">
+
+* Now, if we check the shards status of the "logs" index, we will see that there is
+an allocated primary and replica shards, and two unallocated shards. But, why?
+Simply, because we have two data nodes. What are the maximum replicas that our 
+cluster can support? One only! Because, the primary shard will be on a data node,
+and the other replica shard will be on the other data node. We already know that 
+Elasticsearch won't create a replica on the same server of the primary shard; because
+it's pointless to have a primary and replica shards on the same servers. So, in our
+case, Elasticsearch simply can't find enough data nodes to allocate the extra two
+replica shards that we've just increased.
+
+<img src="readme_files/unassigned_shards.jpg">
+
+* If we check the explain API, it will tell us that for each data node we have,
+there is already a copy of that shard that exists. So we now know that we can't
+create that many shards for the index.
+
+<img src="readme_files/explain_api_unallocated_shard.jpg">
+
+* Also, if we check the health of the cluster now, we will find that the status
+is Yellow. That means all primary shards are allocated. However, some replica
+shards aren't allocated, which doesn't affect the cluster currently.
+
+<img src="readme_files/cluster_health_yellow.jpg">
+
+* Now, we can decrease the number of the replicas back to one, and elasticsearch
+will be able to allocate the primary and replcia shards on the two available 
+data nodes that we have.
+
+<img src="readme_files/status_back_to_green.jpg">
+
+* Another issue that we can deliberately make is to assign the index shard on a
+node that doesn't exist.
+
+<img src="readme_files/allocate_on_missing_node.jpg">
+
+* If we use the explain API on the primary shard that we've just allocated,
+it will us that it can't remain on the current specified node in the settings
+we've specified (data-3). However, it can't also move it to another node as well.
+
+<img src="readme_files/shard_can't_be_allocated.jpg">
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -379,6 +455,7 @@ Mohamed AbdelGawad Ibrahim - [@m-abdelgawad](https://www.linkedin.com/in/m-abdel
 * Elasticsearch Deep Dive Course: https://www.pluralsight.com/cloud-guru/courses/elasticsearch-deep-dive
 * “Hot-Warm” architecture: https://www.elastic.co/fr/blog/hot-warm-architecture
 * Elasticsearch Node Configuration: https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html
+* Access Denied You are not authorized to access Monitoring: https://stackoverflow.com/questions/71552021/access-denied-you-are-not-authorized-to-access-monitoring
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
