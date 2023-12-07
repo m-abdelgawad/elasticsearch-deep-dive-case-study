@@ -431,24 +431,28 @@ non-pipeline aggregation that is generation some kind of output.
 
 * Parent pipeline aggregations
 
-  * Let's calculate the cumulative sum of unique clients per hour
-    * Step 1: Get a bucket per hour using date histogram aggregation
-        <img src="readme_files/avg_file_size_per_extension.jpg">
-        
-    * Step 2: Create a sub-aggregation to get unique clients per hour
-    <img src="readme_files/unique_clients_per_hour.jpg">
+  * Let's calculate the cumulative sum of unique clients per hour.
+  
+  * Step 1: Get a bucket per hour using date histogram aggregation
     
-    * Step 3: Get the cumulative sum of unique clients per hour 
-  <img src="readme_files/cumulative_sum_of_parent_agg.jpg">
+<img src="readme_files/avg_file_size_per_extension.jpg">
+        
+  * Step 2: Create a sub-aggregation to get unique clients per hour
+    
+<img src="readme_files/unique_clients_per_hour.jpg">
+    
+  * Step 3: Get the cumulative sum of unique clients per hour 
+  
+<img src="readme_files/cumulative_sum_of_parent_agg.jpg">
 
 * Sibling pipeline aggregations
 
   * The sibling aggregation is outside the buckets. While the parent
-aggregations are adding metrics (data) to each bucket, the sibling aggregation
-is going to create its own separate aggregation that is a sibling to the 
-buckets.
+  aggregations are adding metrics (data) to each bucket, the sibling aggregation
+  is going to create its own separate aggregation that is a sibling to the 
+  buckets.
 
-  <img src="readme_files/sibling_aggs.jpg">
+<img src="readme_files/sibling_aggs.jpg">
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
