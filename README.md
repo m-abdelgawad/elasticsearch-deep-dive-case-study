@@ -344,15 +344,111 @@ the longitude and latitude location of an IP address.
 
 #### a. Execute Non-Analyzed Search Queries
 
+<img src="readme_files/non-analyzed-search.jpg">
+
 #### b. Execute Analyzed Search Queries
+
+* Standard Analyzer
+
+<img src="readme_files/array_of_tokens_of_string.jpg">
+
+* English Analyzer
+  * The English analyzer removes unnecessary words like "the" and 
+also normalizes some of these words
+
+<img src="readme_files/english_analyzer.jpg">
+
+* Analyzed Search vs. Non-Analyzed Search
+
+<img src="readme_files/analyzed-vs-non-analyzed.jpg">
+
+* Analyzed search with exact phrase
+
+<img src="readme_files/analyzed_search_exact_phrase.jpg">
 
 #### c. Define Metric Aggregations
 
+* Aggregations Search
+
+<img src="readme_files/aggs_search.jpg">
+
+* Sum Aggregation Search
+
+<img src="readme_files/sum_aggs_search.jpg">
+
 #### d. Define Bucket Aggregations
 
-#### e. Define Sub-Aggregations
+<img src="readme_files/bucket_aggs.jpg">
+
+* Another bucket aggregations type is **Date Histogram**. It's very useful for
+time series data.
+
+* If we look at the "logs" index that we created earlier, we can see that our
+logs data is essentially time series data. So, we have an "@timestamp" field:
+
+<img src="readme_files/logs_time_series_data.jpg">
+
+* Let's figure out, per day, how many log events I had. To do that, we need to 
+bucketize the data per day. In order to do that, we're going to do a date
+histogram.
+
+<img src="readme_files/date_histogram_bucket.jpg">
+
+#### e. Define Sub-Aggregations'
+
+* By now, we know how to do metric aggregations, and bucket aggregations. let's
+combine the two into sub-aggregations or nested-aggregations.
+
+<img src="readme_files/date_histogram_bucket.jpg">
+
+* Sample nested aggregations
+
+<img src="readme_files/cities_per_state_aggs.jpg">
+
+* Let's take a look on the logs index
+
+<img src="readme_files/logs_index_view.jpg">
+
+* Let's figure out the sum of bytes transferred for each extension that's have
+been requested.
+
+<img src="readme_files/bytes_per_extension_aggs.jpg">
+
+* Let's also figure out which one of these file extensions has the biggest average
+file size.
+
+<img src="readme_files/avg_file_size_per_extension.jpg">
 
 #### f. Define Pipeline Aggregations
+
+* Pipeline aggreations are aggregations that take as the input, the output of 
+another aggregation.
+* So, in order to have a pipeline aggregations, you have to first have a 
+non-pipeline aggregation that is generation some kind of output.
+* There are two types of pipeline aggregations:
+  * 1. Parent pipeline aggregations
+  * 2. Sibling pipeline aggregations
+
+* Parent pipeline aggregations
+
+  * Let's calculate the cumulative sum of unique clients per hour
+    * Step 1: Get a bucket per hour using date histogram aggregation
+        <img src="readme_files/avg_file_size_per_extension.jpg">
+        
+    * Step 2: Create a sub-aggregation to get unique clients per hour
+    <img src="readme_files/unique_clients_per_hour.jpg">
+    
+    * Step 3: Get the cumulative sum of unique clients per hour 
+  <img src="readme_files/cumulative_sum_of_parent_agg.jpg">
+
+* Sibling pipeline aggregations
+
+  * The sibling aggregation is outside the buckets. While the parent
+aggregations are adding metrics (data) to each bucket, the sibling aggregation
+is going to create its own separate aggregation that is a sibling to the 
+buckets.
+
+  <img src="readme_files/sibling_aggs.jpg">
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
